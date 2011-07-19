@@ -13,6 +13,7 @@ def message (m):
     print m
     sys.stdout.flush()
 
+old = ""
 
 while 1:
     si,so,se = select.select([sys.stdin],[],[], 0.01)
@@ -28,6 +29,9 @@ while 1:
     f = open('request', 'r')
     c = f.read()
     f.close()
+    
+    if old == c: continue
+    old = c
 
     if len(c) < 1: continue
     if c[0] != '*': continue

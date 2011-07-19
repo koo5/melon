@@ -14,8 +14,12 @@ name (indexed text)	value (indexed text)
 with 10 blank rows
 
 table of bugguments
-name (text)	value (text)
+name	value
 with 10 blank rows
+
+table of wtf
+naame (number)	vaalue (number)
+with 4 blank rows
 
 table of posts
 user (indexed text)	subject (indexed text)	content (indexed text)
@@ -41,6 +45,9 @@ Carry out serving a request:
 				choose a blank row in table of bugguments;
 				now name entry is name;
 				now value entry is value;
+				choose a blank row in the table of wtf;
+				now naame entry is 5;
+				now vaalue entry is 4;
 			process the request of path;
 			blank out the whole of the table of arguments;
 			blank out the whole of the table of bugguments;
@@ -49,11 +56,14 @@ Carry out serving a request:
 To list posts:
 	repeat through table of posts:
 		say "[user entry]: [subject entry] - '[content entry]'[line break]";
-	say "[number of rows in the table of posts] posts.[line break]";
+	say "[number of filled rows in the table of posts] posts.[line break]";
 
 To process the request of (path - indexed text):
 	if path is "/sign":
 		say "[path][line break]";
+		say vaalue corresponding to naame of 5 in table of wtf;
+		repeat through table of bugguments:
+			say "[name entry] => [value entry][line break]";
 		let user be value corresponding to the name of "user" in the table of bugguments;
 		choose a blank row in table of posts;
 		now user entry is user;

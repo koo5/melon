@@ -13,14 +13,6 @@ table of arguments
 name (indexed text)	value (indexed text)
 with 10 blank rows
 
-table of bugguments
-name	value
-with 10 blank rows
-
-table of wtf
-naame (number)	vaalue (number)
-with 4 blank rows
-
 table of posts
 user (indexed text)	subject (indexed text)	content (indexed text)
 with 199 blank rows
@@ -35,19 +27,8 @@ Carry out serving a request:
 		read file of request into table of arguments;
 		let count be number of filled rows in table of arguments;
 		if count > 0:
-			let path be some indexed text;
 			repeat through table of arguments:
 				say "[name entry]: [value entry][line break]";
-				if name entry is "path":
-					let path be value entry;
-				let name be name entry;
-				let value be value entry;
-				choose a blank row in table of bugguments;
-				now name entry is name;
-				now value entry is value;
-				choose a blank row in the table of wtf;
-				now naame entry is 5;
-				now vaalue entry is 4;
 			process the request of path;
 			blank out the whole of the table of arguments;
 			blank out the whole of the table of bugguments;
@@ -59,6 +40,11 @@ To list posts:
 	say "[number of filled rows in the table of posts] posts.[line break]";
 
 To process the request of (path - indexed text):
+	let path be some indexed text;
+	repeat through table of arguments:
+		if name entry is "path":
+			let path be value entry;
+	[^fuck this, http://inform7.com/mantis/view.php?id=707 ]
 	if path is "/sign":
 		say "[path][line break]";
 		say vaalue corresponding to naame of 5 in table of wtf;

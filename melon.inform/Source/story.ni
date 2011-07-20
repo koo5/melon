@@ -95,32 +95,27 @@ To print send form:
 	</form>";
 
 To process the request:
-	let post be some truth state;
-	let post be false;
 	let path be some indexed text;
 	let user be some indexed text;
 	let time be some indexed text;
+	let method be some indexed text;
 	let content be some indexed text;
 	let subject be some indexed text;
 	let user nick be some indexed text;
-	let request counter be some indexed text;
 	[]
 	repeat through table of arguments:
-		if name entry is "post":
-			if value entry is "True":
-				let post be true;
 		if name entry is "path":
 			let path be value entry;
 		if name entry is "user":
 			let user be value entry;
 		if name entry is "time":
 			let time be value entry;
+		if name entry is "method":
+			let method be value entry;
 		if name entry is "content":
 			let content be value entry;
 		if name entry is "subject":
 			let subject be value entry;
-		if name entry is "request counter":
-			let request counter be value entry;
 		if name entry is "user nick":
 			let user nick be value entry;
 	[]
@@ -130,7 +125,7 @@ To process the request:
 		if user nick is not empty:
 			return "hello [user nick]! nice to see you here.<br><br>[line break]";
 	otherwise if path is "/post":
-		if post is true:
+		if method is "post":
 			if there is an id of user in table of users:
 				let old nick be nick corresponding to id of user in table of users;
 				if old nick is not user nick:
@@ -165,11 +160,11 @@ To process the request:
 	otherwise:
 		append "404, dude<br>" to file of result;
 	[]
-	print posts;
 	print send form;
+	print posts;
 	[]
 	return "<br><br><br>page source:<br><pre><page source></pre><a href='https://github.com/koo5/melon/blob/master/melon.inform/Source/story.ni'><img style='position: absolute; top: 0; right: 0; border: 0;' src='https://d3nwyuy0nl342s.cloudfront.net/img/abad93f42020b733148435e2cd92ce15c542d320/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67' alt='Fork me on GitHub'></a></body></html>";
-	write "[request counter]" to file of readiness;
+	write "done" to file of readiness;
 
 Understand "check quotas" as checking quotas. Checking quotas is an action applying to nothing.
 carry out checking quotas:

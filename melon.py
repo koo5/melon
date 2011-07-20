@@ -31,13 +31,17 @@ def to_inform_indexed_text(t):
     r += "0;"
     return r
 
-def bla(user, request, get):
+def herp(user, request, get):
     global requestcounter
     requestcounter += 1
     args = table(request)
     args['request counter'] = str(requestcounter)
-    args['user nick'] = cgi.escape(user.nickname())
-    args['user'] = user.user_id()
+    if user:
+	args['user nick'] = cgi.escape(user.nickname())
+	args['user'] = user.user_id()
+    else:
+	del args['user nick']
+	del args['user'] 
     args['path'] = request.path
     args['time'] = str(time.time())
     args['post'] = str(not get)
@@ -56,7 +60,7 @@ def bla(user, request, get):
 		r = open('result', 'r')
 		o = r.read()
 		r.close()
-		o = o.splitlines()
+		o = o.splitlines(True)
 		del o[0]
 		o = ''.join(o)
 		return o
@@ -65,26 +69,24 @@ def bla(user, request, get):
 	except (IOError, IndexError, UserWarning):
     	    time.sleep(0.05)
 
-
 class MainPage(webapp.RequestHandler):
+
+    def derp(self, user, get):
+	res = herp(user, self.request, get)
+	res = string.replace(res, "<page source>", cgi.escape(res))
+	self.response.out.write(res)
+
+    def req(self, get):
+	user = users.get_current_user()
+	if (self.request.path == "/") or user:
+	    self.derp(user, get)
+	else:
+	    self.redirect(users.create_login_url(self.request.uri))
+
     def get(self):
-	user = users.get_current_user()
-	if user:
-		res = bla(user, self.request, True)
-		res = string.replace(res, "<page source>", cgi.escape(res))
-		
-		self.response.out.write(res)
-	else:
-		self.redirect(users.create_login_url(self.request.uri))
+	self.req(True)
     def post(self):
-	user = users.get_current_user()
-	if user:
-		res = bla(user, self.request, False)
-		res = string.replace(res, "<page source>", cgi.escape(res))
-		
-		self.response.out.write(res)
-	else:
-		self.redirect(users.create_login_url(self.request.uri))
+	self.req(False)
 
 
 application = webapp.WSGIApplication(

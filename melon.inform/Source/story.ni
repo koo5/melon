@@ -29,9 +29,8 @@ Carry out serving a request:
 		if count > 0:
 			repeat through table of arguments:
 				say "[name entry]: [value entry][line break]";
-			process the request of path;
+			process the request;
 			blank out the whole of the table of arguments;
-			blank out the whole of the table of bugguments;
 			write file of request from table of arguments;
 
 To list posts:
@@ -39,20 +38,29 @@ To list posts:
 		say "[user entry]: [subject entry] - '[content entry]'[line break]";
 	say "[number of filled rows in the table of posts] posts.[line break]";
 
-To process the request of (path - indexed text):
+To process the request:
 	let path be some indexed text;
+	let user be some indexed text;
+	let content be some indexed text;
+	let subject be some indexed text;
+	[]
 	repeat through table of arguments:
 		if name entry is "path":
 			let path be value entry;
-	[^fuck this, http://inform7.com/mantis/view.php?id=707 ]
+		if name entry is "user":
+			let user be value entry;
+		if name entry is "content":
+			let content be value entry;
+		if name entry is "subject":
+			let subject be value entry;
+	[]
+	say "[path][line break]";					
+	[]
 	if path is "/sign":
-		say "[path][line break]";
-		say vaalue corresponding to naame of 5 in table of wtf;
-		repeat through table of bugguments:
-			say "[name entry] => [value entry][line break]";
-		let user be value corresponding to the name of "user" in the table of bugguments;
 		choose a blank row in table of posts;
 		now user entry is user;
+		now content entry is content;
+		now subject entry is subject;
 		write file of posts from table of posts;
 		list posts;
 	else:

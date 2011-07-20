@@ -31,7 +31,7 @@ def to_inform_indexed_text(t):
     r += "0;"
     return r
 
-def bla(user, request):
+def bla(user, request, get):
     global requestcounter
     requestcounter += 1
     args = table(request)
@@ -40,6 +40,7 @@ def bla(user, request):
     args['user'] = user.user_id()
     args['path'] = request.path
     args['time'] = str(time.time())
+    args['post'] = str(not get)
     f = open('request', 'w')
     request_header(f,((len(args))))
     for name, val in args.iteritems():
@@ -69,7 +70,16 @@ class MainPage(webapp.RequestHandler):
     def get(self):
 	user = users.get_current_user()
 	if user:
-		res = bla(user, self.request)
+		res = bla(user, self.request, True)
+		res = string.replace(res, "<page source>", cgi.escape(res))
+		
+		self.response.out.write(res)
+	else:
+		self.redirect(users.create_login_url(self.request.uri))
+    def post(self):
+	user = users.get_current_user()
+	if user:
+		res = bla(user, self.request, False)
 		res = string.replace(res, "<page source>", cgi.escape(res))
 		
 		self.response.out.write(res)

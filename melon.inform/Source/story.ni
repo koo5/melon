@@ -2,7 +2,7 @@
 
 The forum is a room.
 
-Use MAX_STATIC_DATA of 1800000.
+Use MAX_STATIC_DATA of 18000000.
 [big big tables]
 
 File of request (owned by another project) is called "request".
@@ -61,7 +61,7 @@ To print posts:
 
 To print send form:
 	return "<br><br>
-	<form action='/post' method='get'>
+	<form action='/post' method='post'>
 	<div><input type='text' name='subject' cols='60' value='subjectum'></div>
 	<div><textarea name='content' rows='3' cols='60'>lala</textarea></div>
 	<div><input type='submit' value='Send'></div>
@@ -69,6 +69,8 @@ To print send form:
 	</form>";
 
 To process the request:
+	let post be some truth state;
+	let post be false;
 	let path be some indexed text;
 	let user be some indexed text;
 	let time be some indexed text;
@@ -78,6 +80,9 @@ To process the request:
 	let request counter be some indexed text;
 	[]
 	repeat through table of arguments:
+		if name entry is "post":
+			if value entry is "True":
+				let post be true;
 		if name entry is "path":
 			let path be value entry;
 		if name entry is "user":
@@ -98,25 +103,37 @@ To process the request:
 		print posts;
 		print send form;
 	otherwise if path is "/post":
-		if there is an id of user in table of users:
-			if nick corresponding to id of user in table of users is not user nick:
-				say "old nick: [nick corresponding to id of user in table of users], new nick: [user nick], updating nick...[line break]";
-			now nick corresponding to id of user in table of users is user nick;
+		if post is true:
+			say "au";
+			if there is an id of user in table of users:
+				say "la";
+				let old nick be nick corresponding to id of user in table of users;
+				say "ma";
+				if old nick is not user nick:
+					say "da";
+					say "old nick: [old nick], new nick: [user nick], updating nick...[line 	break]";
+					say "pa";
+					choose row with id of user in table of users;
+					now nick corresponding to id of user in table of users is user nick;
+				say "ya";
+			else:
+				say "adding new user[line break]";
+				choose a blank row in table of users;
+				now id entry is user;
+				now nick entry is user nick;
+			[]
+			choose a blank row in table of posts;
+			now user entry is user;
+			now time entry is time;
+			now content entry is content;
+			now subject entry is subject;
+			write file of posts from table of posts;
+			write file of users from table of users;
+			return "<b>Sent!</b><br>[line break]";
+			list posts;
+			list users;
 		else:
-			choose a blank row in table of users;
-			now id entry is user;
-			now nick entry is user nick;
-		[]
-		choose a blank row in table of posts;
-		now user entry is user;
-		now time entry is time;
-		now content entry is content;
-		now subject entry is subject;
-		write file of posts from table of posts;
-		write file of users from table of users;
-		return "<b>Sent!</b><br>[line break]";
-		list posts;
-		list users;
+			return "post me baby 1 2 3<br>";
 		print posts;
 		print send form;
 	otherwise:

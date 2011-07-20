@@ -12,6 +12,12 @@ def get_secret():
 
 secret = get_secret()
 
+def get_server():
+    with open('server', 'r') as f:
+	return f.read()
+
+secret = get_secret()
+
 def table(request):
     args = dict()
     names = request.get('request').split(',')
@@ -34,10 +40,11 @@ def herp(user, request, method):
 
 def fetch(user, request, method):
     args = urllib.urlencode(herp(user, request, method))
-    return urlfetch.fetch(url = "http://localhost:8081",
+    return urlfetch.fetch(url = server,
 			payload = args,
 			method = urlfetch.POST,
-			headers={'Content-Type': 'application/x-www-form-urlencoded'})
+			headers={'Content-Type': 'application/x-www-form-urlencoded'},
+			deadline = 10)
 
 class MainPage(webapp.RequestHandler):
 

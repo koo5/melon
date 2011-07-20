@@ -11,7 +11,7 @@ import urllib
 import urlparse
 
 def get_secret():
-    with open('secret', 'r') as f:
+    with open('googlo/secret', 'r') as f:
 	return f.read()
 
 def debug (m):

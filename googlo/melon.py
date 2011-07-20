@@ -7,16 +7,24 @@ from google.appengine.api import urlfetch
 import string
 
 def get_secret():
-    with open('secret', 'r') as f:
-	return f.read()
+    try:
+	with open('../secret', 'r') as f:
+	    return f.read()
+    except Error:
+	with open('secret', 'r') as f:
+	    return f.read()
 
 secret = get_secret()
 
 def get_server():
-    with open('server', 'r') as f:
-	return f.read()
+    try:
+        with open('../server', 'r') as f:
+	    return f.read()
+    except:
+        with open('server', 'r') as f:
+	    return f.read()
 
-secret = get_secret()
+server = get_server()
 
 def table(request):
     args = dict()

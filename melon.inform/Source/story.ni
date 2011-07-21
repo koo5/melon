@@ -2,7 +2,7 @@
 
 The forum is a room.
 
-Use MAX_STATIC_DATA of 180000000.
+Use MAX_STATIC_DATA of 39000000.
 [big big tables]
 
 File of request (owned by another project) is called "request".
@@ -17,11 +17,11 @@ with 10 blank rows
 
 table of posts
 user (indexed text)	subject (indexed text)	content (indexed text)	time (indexed text)
-with 10000 blank rows
+with 1000 blank rows
 
 table of users
 nick (indexed text)	id (indexed text)
-with 10000 blank rows
+with 100 blank rows
 
 blank users is a number that varies;
 blank posts is a number that varies;

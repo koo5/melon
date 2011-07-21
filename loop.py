@@ -65,7 +65,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             	    postvars = cgi.parse_multipart(s.rfile, pdict)
                 elif ctype == 'application/x-www-form-urlencoded':
                     length = int(s.headers.getheader('content-length'))
-                    postvars = urlparse.parse_qs(s.rfile.read(length))
+                    postvars = cgi.parse_qs(s.rfile.read(length))
                 else:
                     postvars = {}
 
@@ -95,7 +95,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 		s.wfile.write(o)
 
 secret = get_secret()
-httpd = BaseHTTPServer.HTTPServer(('localhost', 8081), MyHandler)
+httpd = BaseHTTPServer.HTTPServer(('0.0.0.0', 8081), MyHandler)
 httpd.timeout = 0.01
 
 while 1:

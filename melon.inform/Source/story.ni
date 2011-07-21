@@ -2,7 +2,7 @@
 
 The forum is a room.
 
-Use MAX_STATIC_DATA of 39000000.
+Use MAX_STATIC_DATA of 38000000.
 [big big tables]
 
 File of request (owned by another project) is called "request".
@@ -123,7 +123,9 @@ To process the request:
 	check quotas, loudly;
 	if path is "/":
 		if user nick is not empty:
-			return "hello [user nick]! nice to see you here.<br><br>[line break]";
+			return "hello [user nick]! nice to see you here.";
+			return "<logout>";
+			return "<br><br>[line break]";
 		otherwise:
 			return "<login>";
 	otherwise if path is "/post":

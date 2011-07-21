@@ -82,13 +82,18 @@ class MainPage(webapp.RequestHandler):
 	x+='</form>'
 	x+="<form action=\"/login_redirect\" method=\"get\">"
 	x+='<input type="text" name="url">'
+	x+='<input type="submit" value="Go Log in">'
 	x+='</form>'
 	return x
+	
+    def logout_form(self):
+	return users.create_logout_url(self.request.uri)
 	
     def serve(self, user, method):
 	res = fetch(user, self.request, method)
 	res = string.replace(res, "<page source>", cgi.escape(res))
 	res = string.replace(res, "<login>", self.login_form())
+	res = string.replace(res, "<logout>", self.logout_form())
 	self.response.out.write(res)
 
     def req(self, method):

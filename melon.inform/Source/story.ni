@@ -124,6 +124,8 @@ To process the request:
 	if path is "/":
 		if user nick is not empty:
 			return "hello [user nick]! nice to see you here.<br><br>[line break]";
+		otherwise:
+			return "<login>";
 	otherwise if path is "/post":
 		if method is "post":
 			if there is an id of user in table of users:
@@ -157,6 +159,8 @@ To process the request:
 			list users;
 		else:
 			return "POST me baby 1 2 3<br>";
+	otherwise if path is "/_ah/login_required":
+		return "<login>";
 	otherwise:
 		append "404, dude<br>" to file of result;
 	[]

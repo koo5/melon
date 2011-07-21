@@ -5,24 +5,25 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 import urllib
 from google.appengine.api import urlfetch
 import string
+import sys
 
 def get_secret():
     try:
-	with open('../secret', 'r') as f:
-	    return f.read()
-    except Error:
-	with open('secret', 'r') as f:
-	    return f.read()
+	f = open('../secret', 'r')
+	return f.read()
+    except Exception:
+	f = open('secret', 'r')
+	return f.read()
 
 secret = get_secret()
 
 def get_server():
     try:
-        with open('../server', 'r') as f:
-	    return f.read()
-    except:
-        with open('server', 'r') as f:
-	    return f.read()
+        f = open('../server', 'r')
+	return f.read()
+    except Exception:
+        f = open('server', 'r')
+	return f.read()
 
 server = get_server()
 
@@ -39,8 +40,8 @@ def herp(user, request, method):
 	args['user nick'] = cgi.escape(user.nickname())
 	args['user'] = user.user_id()
     else:
-	del args['user nick']
-	del args['user'] 
+	args['user nick'] = ""
+	args['user'] = ""
     args['path'] = request.path
     args['method'] = method
     args['secret'] = secret
@@ -48,22 +49,53 @@ def herp(user, request, method):
 
 def fetch(user, request, method):
     args = urllib.urlencode(herp(user, request, method))
-    return urlfetch.fetch(url = server,
+    try:
+	return urlfetch.fetch(url = server,
 			payload = args,
 			method = urlfetch.POST,
 			headers={'Content-Type': 'application/x-www-form-urlencoded'},
-			deadline = 10)
+			deadline = 10).content
+    except urlfetch.DownloadError:
+	return 'X'#'cant connect to '+server
+
+openIdProviders = (
+    'Google.com/accounts/o8/id', # shorter alternative: "Gmail.com"
+        'Yahoo.com',
+            'MySpace.com',
+                'AOL.com',
+                    'MyOpenID.com'
+                        # add more here
+                        )
+
 
 class MainPage(webapp.RequestHandler):
 
+    def login_form(self):
+	x=  "<form action=\"/login_redirect\" method=\"get\">"
+	x+=  "<select name=\"url\">"
+	for p in openIdProviders:
+    	    p_name = p.split('.')[0] # take "AOL" from "AOL.com"
+	    p_url = p.lower()        # "AOL.com" -> "aol.com"
+	    x+='<option value="'+users.create_login_url(federated_identity=p_url)+'">'+p_name+'</option>'
+	x+='</select>'
+	x+='<input type="submit" value="Go Log in">'
+	x+='</form>'
+	x+="<form action=\"/login_redirect\" method=\"get\">"
+	x+='<input type="text" name="url">'
+	x+='</form>'
+	return x
+	
     def serve(self, user, method):
-	res = fetch(user, self.request, method).content
+	res = fetch(user, self.request, method)
 	res = string.replace(res, "<page source>", cgi.escape(res))
+	res = string.replace(res, "<login>", self.login_form())
 	self.response.out.write(res)
 
     def req(self, method):
 	user = users.get_current_user()
-	if (self.request.path == "/") or user:
+	if (self.request.path == "/login_redirect"):
+	    self.redirect(self.request.get('url'))
+	elif (self.request.path == "/_ah/login_requered") or (self.request.path == "/") or user:
 	    self.serve(user, method)
 	else:
 	    self.redirect(users.create_login_url(self.request.uri))

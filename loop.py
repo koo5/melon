@@ -10,17 +10,19 @@ import BaseHTTPServer
 import urllib
 import urlparse
 
-def get_secret():
-    try:
-	f = open('secret', 'r')
-	return f.read()
-    except Exception:
-	f = open('googlo/secret', 'r')
-	return f.read()
-
 def debug (m):
     print >> sys.stderr, m
     sys.stderr.flush()
+
+
+try:
+    f = open('dev', 'r')
+    import googlo.dev as settings
+    debug ('dev')
+    
+except Exception:
+    import googlo.prod as settings
+
 
 def message (m):
     print >> sys.stderr, '#sending: ', [m]
@@ -74,7 +76,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                     
 		debug(postvars)
 		
-		if secret != postvars['secret']:
+		if settings.secret != postvars['secret']:
 		    return
 		
 		write_args(postvars)
@@ -94,7 +96,6 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 		
 		s.wfile.write(o)
 
-secret = get_secret()
 httpd = BaseHTTPServer.HTTPServer(('0.0.0.0', 8081), MyHandler)
 httpd.timeout = 0.01
 

@@ -6,26 +6,14 @@ import urllib
 from google.appengine.api import urlfetch
 import string
 import sys
-
-def get_secret():
-    try:
-	f = open('../secret', 'r')
-	return f.read()
-    except Exception:
-	f = open('secret', 'r')
-	return f.read()
-
-secret = get_secret()
-
-def get_server():
-    try:
-        f = open('../server', 'r')
-	return f.read()
-    except Exception:
-        f = open('server', 'r')
-	return f.read()
-
-server = get_server()
+import os
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+if os.environ['SERVER_SOFTWARE'].startswith('Dev'):
+    dev = True
+    import debg as settings
+else:
+    dev = False
+    import prod as settings
 
 def table(request):
     args = dict()
@@ -44,19 +32,22 @@ def herp(user, request, method):
 	args['user'] = ""
     args['path'] = request.path
     args['method'] = method
-    args['secret'] = secret
+    args['secret'] = settings.secret
     return args
 
 def fetch(user, request, method):
     args = urllib.urlencode(herp(user, request, method))
     try:
-	return urlfetch.fetch(url = server,
+	return urlfetch.fetch(url = settings.server,
 			payload = args,
 			method = urlfetch.POST,
 			headers={'Content-Type': 'application/x-www-form-urlencoded'},
 			deadline = 10).content
     except urlfetch.DownloadError:
-	return 'X'#'cant connect to '+server
+	if dev:
+	    return settings.server + '?'
+	else:
+	    return 'X'
 
 openIdProviders = (
     'Google.com/accounts/o8/id', # shorter alternative: "Gmail.com"
@@ -76,7 +67,7 @@ class MainPage(webapp.RequestHandler):
 	for p in openIdProviders:
     	    p_name = p.split('.')[0] # take "AOL" from "AOL.com"
 	    p_url = p.lower()        # "AOL.com" -> "aol.com"
-	    x+='<option value="'+users.create_login_url(federated_identity=p_url)+'">'+p_name+'</option>'
+	    x+='<option value="'+p_url+'">'+p_name+'</option>'
 	x+='</select>'
 	x+='<input type="submit" value="Go Log in">'
 	x+='</form>'
@@ -87,7 +78,7 @@ class MainPage(webapp.RequestHandler):
 	return x
 	
     def logout_form(self):
-	return users.create_logout_url(self.request.uri)
+	return '<a href="'+users.create_logout_url(self.request.uri)+'">logout</a>'
 	
     def serve(self, user, method):
 	res = fetch(user, self.request, method)
@@ -99,7 +90,7 @@ class MainPage(webapp.RequestHandler):
     def req(self, method):
 	user = users.get_current_user()
 	if (self.request.path == "/login_redirect"):
-	    self.redirect(self.request.get('url'))
+	    self.redirect(users.create_login_url("/", federated_identity=self.request.get('url')))
 	elif (self.request.path == "/_ah/login_requered") or (self.request.path == "/") or user:
 	    self.serve(user, method)
 	else:
